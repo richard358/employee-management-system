@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: employee-management
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: DB_HOST
+        value: sql8.freesqldatabase.com
+      - key: DB_USER
+        value: sql8780318
+      - key: DB_PASSWORD
+        value: TRvrJ1NCSN
+      - key: DB_NAME
+        value: sql8780318

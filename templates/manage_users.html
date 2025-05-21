@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users</title>
+    <style>
+        body { font-family: Arial; background-color: #f4f4f4; margin: 40px; }
+        .btn { padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background-color: #0056b3; }
+        .delete-btn { background-color: red; }
+        .delete-btn:hover { background-color: darkred; }
+        input, select { padding: 8px; margin: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h2>Manage Users</h2>
+    <form method="post">
+        <input name="username" placeholder="Username" required>
+        <input name="password" placeholder="Password" required>
+        <select name="role">
+            <option value="admin">Admin</option>
+            <option value="staff">Staff</option>
+        </select>
+        <button class="btn" type="submit">Add User</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="message">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr><th>Username</th><th>Role</th><th>Actions</th></tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user[0] }}</td>
+            <td>{{ user[1] }}</td>
+            <td>
+                {% if user[0] != session['user'] %}
+                <a href="/delete_user/{{ user[0] }}" class="btn delete-btn">Delete</a>
+                {% else %}
+                <span style="color: gray;">(You)</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

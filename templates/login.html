@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - EMS</title>
+    <style>
+        body { font-family: Arial; background-color: #f8f8f8; text-align: center; padding-top: 100px; }
+        form { display: inline-block; background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+        input { padding: 10px; margin: 10px; width: 250px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        .btn:hover { background: #0056b3; }
+        .flash { color: red; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <form method="post">
+        <h2>Login</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button class="btn" type="submit">Login</button>
+    </form>
+</body>
+</html>

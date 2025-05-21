@@ -1,0 +1,6 @@
+Flask
+PyMySQL
+pandas
+bcrypt
+openpyxl
+gunicorn
