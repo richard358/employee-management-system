@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
-import pymysql
+import psycopg2
 import pandas as pd
 import bcrypt
 import os
@@ -8,12 +8,13 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 def get_db_connection():
-    return pymysql.connect(
+    return psycopg2.connect(
         host=os.environ.get("DB_HOST"),
+        database=os.environ.get("DB_NAME"),
         user=os.environ.get("DB_USER"),
         password=os.environ.get("DB_PASSWORD"),
-        database=os.environ.get("DB_NAME"),
-        port=3306
+        port=os.environ.get("DB_PORT", 5432),
+        sslmode='require'  # Supabase requires SSL connection
     )
 
 @app.route('/')
@@ -29,6 +30,7 @@ def login():
         cur = conn.cursor()
         cur.execute("SELECT password, role FROM users WHERE username=%s", (username,))
         result = cur.fetchone()
+        cur.close()
         conn.close()
         if result and bcrypt.checkpw(password.encode('utf-8'), result[0].encode('utf-8')):
             session['user'] = username
@@ -52,6 +54,7 @@ def dashboard():
     cur = conn.cursor()
     cur.execute("SELECT * FROM data")
     employees = cur.fetchall()
+    cur.close()
     conn.close()
     return render_template('index.html', employees=employees, role=session.get('role'))
 
@@ -67,9 +70,10 @@ def add():
     salary = request.form['salary']
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO data VALUES (%s, %s, %s, %s, %s, %s)", 
+    cur.execute("INSERT INTO data (id, name, phone, role, gender, salary) VALUES (%s, %s, %s, %s, %s, %s)",
                 (id, name, phone, role, gender, salary))
     conn.commit()
+    cur.close()
     conn.close()
     flash("Employee added successfully.")
     return redirect(url_for('dashboard'))
@@ -86,9 +90,10 @@ def update():
     salary = request.form['salary']
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("UPDATE data SET Name=%s, Phone=%s, Role=%s, Gender=%s, Salary=%s WHERE Id=%s",
+    cur.execute("""UPDATE data SET name=%s, phone=%s, role=%s, gender=%s, salary=%s WHERE id=%s""",
                 (name, phone, role, gender, salary, id))
     conn.commit()
+    cur.close()
     conn.close()
     flash("Employee updated successfully.")
     return redirect(url_for('dashboard'))
@@ -99,8 +104,9 @@ def delete(id):
         return redirect(url_for('dashboard'))
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("DELETE FROM data WHERE Id=%s", (id,))
+    cur.execute("DELETE FROM data WHERE id=%s", (id,))
     conn.commit()
+    cur.close()
     conn.close()
     flash("Record deleted.")
     return redirect(url_for('dashboard'))
@@ -111,8 +117,9 @@ def delete_all():
         return redirect(url_for('dashboard'))
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("TRUNCATE TABLE data")
+    cur.execute("TRUNCATE TABLE data RESTART IDENTITY CASCADE")  # Resets serial id in PostgreSQL
     conn.commit()
+    cur.close()
     conn.close()
     flash("All records deleted.")
     return redirect(url_for('dashboard'))
@@ -123,10 +130,18 @@ def search():
         return redirect(url_for('login'))
     option = request.args.get('option')
     value = request.args.get('value')
+    if option not in ['id', 'name', 'phone', 'role', 'gender', 'salary']:
+        flash("Invalid search option.")
+        return redirect(url_for('dashboard'))
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM data WHERE {option} = %s", (value,))
+    # Use ILIKE for case-insensitive search for strings
+    if option in ['name', 'phone', 'role', 'gender']:
+        cur.execute(f"SELECT * FROM data WHERE {option} ILIKE %s", (f'%{value}%',))
+    else:
+        cur.execute(f"SELECT * FROM data WHERE {option} = %s", (value,))
     employees = cur.fetchall()
+    cur.close()
     conn.close()
     return render_template('index.html', employees=employees, role=session.get('role'))
 
@@ -138,6 +153,7 @@ def download_excel():
     cur = conn.cursor()
     cur.execute("SELECT * FROM data")
     rows = cur.fetchall()
+    cur.close()
     conn.close()
     df = pd.DataFrame(rows, columns=['ID', 'Name', 'Phone', 'Role', 'Gender', 'Salary'])
     filepath = 'employee_data.xlsx'
@@ -161,6 +177,7 @@ def manage_users():
         conn.commit()
     cur.execute("SELECT username, role FROM users")
     users = cur.fetchall()
+    cur.close()
     conn.close()
     return render_template('manage_users.html', users=users)
 
@@ -176,6 +193,7 @@ def delete_user(username):
     cur = conn.cursor()
     cur.execute("DELETE FROM users WHERE username=%s", (username,))
     conn.commit()
+    cur.close()
     conn.close()
     flash(f"User '{username}' has been deleted.")
     return redirect(url_for('manage_users'))
@@ -197,11 +215,13 @@ def change_password():
         result = cur.fetchone()
         if not result or not bcrypt.checkpw(current_password.encode('utf-8'), result[0].encode('utf-8')):
             flash("Current password is incorrect.")
+            cur.close()
             conn.close()
             return redirect(url_for('change_password'))
         hashed_pw = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
         cur.execute("UPDATE users SET password=%s WHERE username=%s", (hashed_pw.decode('utf-8'), session['user']))
         conn.commit()
+        cur.close()
         conn.close()
         flash("Password updated successfully.")
         return redirect(url_for('dashboard'))
