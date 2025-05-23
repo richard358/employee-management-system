@@ -13,8 +13,7 @@ def get_db_connection():
         database=os.environ.get("DB_NAME"),
         user=os.environ.get("DB_USER"),
         password=os.environ.get("DB_PASSWORD"),
-        port=os.environ.get("DB_PORT", 5432),
-        sslmode='require'  # Supabase requires SSL connection
+        port=os.environ.get("DB_PORT", 5432)
     )
 
 @app.route('/')
@@ -90,7 +89,7 @@ def update():
     salary = request.form['salary']
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("""UPDATE data SET name=%s, phone=%s, role=%s, gender=%s, salary=%s WHERE id=%s""",
+    cur.execute("UPDATE data SET name=%s, phone=%s, role=%s, gender=%s, salary=%s WHERE id=%s",
                 (name, phone, role, gender, salary, id))
     conn.commit()
     cur.close()
@@ -117,7 +116,7 @@ def delete_all():
         return redirect(url_for('dashboard'))
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("TRUNCATE TABLE data RESTART IDENTITY CASCADE")  # Resets serial id in PostgreSQL
+    cur.execute("TRUNCATE TABLE data RESTART IDENTITY CASCADE")
     conn.commit()
     cur.close()
     conn.close()
@@ -135,11 +134,7 @@ def search():
         return redirect(url_for('dashboard'))
     conn = get_db_connection()
     cur = conn.cursor()
-    # Use ILIKE for case-insensitive search for strings
-    if option in ['name', 'phone', 'role', 'gender']:
-        cur.execute(f"SELECT * FROM data WHERE {option} ILIKE %s", (f'%{value}%',))
-    else:
-        cur.execute(f"SELECT * FROM data WHERE {option} = %s", (value,))
+    cur.execute(f"SELECT * FROM data WHERE {option} ILIKE %s", (f'%{value}%',))
     employees = cur.fetchall()
     cur.close()
     conn.close()
