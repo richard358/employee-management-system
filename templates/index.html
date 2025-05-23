@@ -4,54 +4,116 @@
     <meta charset="UTF-8">
     <title>Employee Management System</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f4; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
-        th { background-color: #007bff; color: white; }
-        form { margin-bottom: 20px; }
-        input, select { padding: 8px; margin: 5px; }
-        .message { color: green; margin-bottom: 20px; padding: 10px; background-color: #dff0d8; border: 1px solid #d0e9c6; }
-        .btn { padding: 8px 16px; background-color: #007bff; color: white; border: none; cursor: pointer; text-decoration: none; border-radius: 4px; }
-        .btn:hover { background-color: #0056b3; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            color: green;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #dff0d8;
+            border: 1px solid #d0e9c6;
+            border-radius: 4px;
+        }
+
+        form.inline-form {
+            display: inline-block;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
+
     <div class="top-bar">
         <h1>Employee Management System</h1>
         <div>
+            <a href="/dashboard" class="btn">Home</a>
             <a href="/logout" class="btn">Logout</a>
             <a href="/download_excel" class="btn">Download Excel</a>
             {% if role == 'admin' %}
             <a href="/manage_users" class="btn">Manage Users</a>
             {% endif %}
+            <a href="/change_password" class="btn">Change Password</a>
         </div>
     </div>
 
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="message" id="flash-message">
-          {% for message in messages %}
-            <p>{{ message }}</p>
-          {% endfor %}
-        </div>
-        <script>
-          setTimeout(function() {
-            var flash = document.getElementById('flash-message');
-            if (flash) { flash.style.display = 'none'; }
-          }, 3000);
-        </script>
-      {% endif %}
+        {% if messages %}
+            <div class="message" id="flash-message">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const flash = document.getElementById('flash-message');
+                    if (flash) flash.style.display = 'none';
+                }, 3000);
+            </script>
+        {% endif %}
     {% endwith %}
 
-    <form method="get" action="/search" style="display: inline-block;">
+    <!-- Search Form -->
+    <form method="get" action="/search" class="inline-form">
         <select name="option">
-            <option value="Id">ID</option>
-            <option value="Name">Name</option>
-            <option value="Phone">Phone</option>
-            <option value="Role">Role</option>
-            <option value="Gender">Gender</option>
-            <option value="Salary">Salary</option>
+            <option value="id">ID</option>
+            <option value="name">Name</option>
+            <option value="phone">Phone</option>
+            <option value="role">Role</option>
+            <option value="gender">Gender</option>
+            <option value="salary">Salary</option>
         </select>
         <input type="text" name="value" placeholder="Search..." required>
         <button class="btn" type="submit">Search</button>
@@ -59,7 +121,8 @@
     <a href="/dashboard" class="btn">Show All</a>
 
     {% if role == 'admin' %}
-    <form action="/add" method="post">
+    <!-- Add Employee Form -->
+    <form action="/add" method="post" style="margin-top: 20px;">
         <input type="text" name="id" placeholder="ID (e.g., pmra1)" required>
         <input type="text" name="name" placeholder="Name" required>
         <input type="text" name="phone" placeholder="Phone" required>
@@ -83,6 +146,7 @@
     </form>
     {% endif %}
 
+    <!-- Employee Table -->
     <table>
         <tr>
             <th>ID</th><th>Name</th><th>Phone</th><th>Role</th><th>Gender</th><th>Salary</th><th>Actions</th>
@@ -98,8 +162,10 @@
                 <td><input type="text" name="salary" value="{{ emp[5] }}"></td>
                 <td>
                     {% if role == 'admin' %}
-                    <button class="btn" type="submit">Update</button>
-                    <a class="btn" href="/delete/{{ emp[0] }}">Delete</a>
+                        <button class="btn" type="submit">Update</button>
+                        <a class="btn" href="/delete/{{ emp[0] }}">Delete</a>
+                    {% else %}
+                        <span style="color: #777;">N/A</span>
                     {% endif %}
                 </td>
             </form>
@@ -110,7 +176,6 @@
     {% if role == 'admin' %}
     <a href="/delete_all" class="btn">Delete All Records</a>
     {% endif %}
-    <a href="/change_password" class="btn">Change Password</a>
 
 </body>
 </html>

@@ -1,31 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login - EMS</title>
+    <meta charset="UTF-8">
+    <title>Login - Employee Management System</title>
     <style>
-        body { font-family: Arial; background-color: #f8f8f8; text-align: center; padding-top: 100px; }
-        form { display: inline-block; background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-        input { padding: 10px; margin: 10px; width: 250px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        .btn:hover { background: #0056b3; }
-        .flash { color: red; margin-bottom: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding-top: 80px;
+        }
+
+        form {
+            background: #fff;
+            padding: 40px;
+            display: inline-block;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .flash {
+            color: red;
+            margin-bottom: 15px;
+        }
+
+        #flash-message {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
+
     <form method="post">
         <h2>Login</h2>
+
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <div class="flash">
+                <div class="flash" id="flash-message">
                     {% for message in messages %}
                         <p>{{ message }}</p>
                     {% endfor %}
                 </div>
+                <script>
+                    // Auto-hide flash message after 3 seconds
+                    setTimeout(function () {
+                        const flash = document.getElementById('flash-message');
+                        if (flash) flash.style.display = 'none';
+                    }, 3000);
+                </script>
             {% endif %}
         {% endwith %}
+
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="password" name="password" placeholder="Password" required><br>
         <button class="btn" type="submit">Login</button>
     </form>
+
 </body>
 </html>
