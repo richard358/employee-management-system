@@ -1,84 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Employee Management System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
+{% extends 'layout.html' %}
 
-        form {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #ccc;
-            width: 100%;
-            max-width: 350px;
-        }
+{% block content %}
+<form method="post" class="container mt-5" style="max-width: 400px;">
+    <h2 class="mb-4 text-center">Login</h2>
 
-        input {
-            padding: 10px;
-            margin: 10px 0;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-        .btn {
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            width: 100%;
-        }
-
-        .btn:hover {
-            background: #0056b3;
-        }
-
-        .flash {
-            color: red;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-
-    <form method="post">
-        <h2>Login</h2>
-
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="flash" id="flash-message">
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                </div>
-                <script>
-                    setTimeout(function () {
-                        const flash = document.getElementById('flash-message');
-                        if (flash) flash.style.display = 'none';
-                    }, 3000);
-                </script>
-            {% endif %}
-        {% endwith %}
-
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button class="btn" type="submit">Login</button>
-    </form>
-
-</body>
-</html>
+    <div class="mb-3">
+        <input type="text" name="username" class="form-control" placeholder="Username" required>
+    </div>
+    <div class="mb-3">
+        <input type="password" name="password" class="form-control" placeholder="Password" required>
+    </div>
+    <button class="btn btn-primary w-100" type="submit">Login</button>
+</form>
+{% endblock %}
