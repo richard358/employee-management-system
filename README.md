@@ -1,6 +1,6 @@
 # Employee Management System
 
-This is a web-based employee management system built with Flask and MySQL.
+This is a web-based employee management system built with Flask and PostgreSQL.
 
 ## Features
 - Add, edit, delete employee records

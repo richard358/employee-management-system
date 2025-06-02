@@ -1,29 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Management System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 10px;
             background-color: #f4f4f4;
         }
 
-        h1 {
-            margin-bottom: 10px;
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 10px;
+        }
+
+        .top-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .top-bar .actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-bottom: 20px;
+            overflow-x: auto;
         }
 
         th, td {
             padding: 10px;
             border: 1px solid #ccc;
             text-align: left;
+            font-size: 14px;
         }
 
         th {
@@ -31,32 +72,16 @@
             color: white;
         }
 
+        form {
+            margin-bottom: 15px;
+        }
+
         input, select {
             padding: 8px;
             margin: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-
-        .btn:hover {
-            background-color: #0056b3;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            width: 100%;
+            max-width: 250px;
+            box-sizing: border-box;
         }
 
         .message {
@@ -65,20 +90,22 @@
             padding: 10px;
             background-color: #dff0d8;
             border: 1px solid #d0e9c6;
-            border-radius: 4px;
+            text-align: center;
         }
 
-        form.inline-form {
-            display: inline-block;
-            margin-right: 10px;
+        @media screen and (min-width: 600px) {
+            .top-bar {
+                flex-direction: row;
+            }
         }
     </style>
 </head>
 <body>
 
+<div class="container">
     <div class="top-bar">
         <h1>Employee Management System</h1>
-        <div>
+        <div class="actions">
             <a href="/dashboard" class="btn">Home</a>
             <a href="/logout" class="btn">Logout</a>
             <a href="/download_excel" class="btn">Download Excel</a>
@@ -105,8 +132,7 @@
         {% endif %}
     {% endwith %}
 
-    <!-- Search Form -->
-    <form method="get" action="/search" class="inline-form">
+    <form method="get" action="/search">
         <select name="option">
             <option value="id">ID</option>
             <option value="name">Name</option>
@@ -121,21 +147,51 @@
     <a href="/dashboard" class="btn">Show All</a>
 
     {% if role == 'admin' %}
-    <!-- Add Employee Form -->
-    <form action="/add" method="post" style="margin-top: 20px;">
+    <form action="/add" method="post">
         <input type="text" name="id" placeholder="ID (e.g., pmra1)" required>
         <input type="text" name="name" placeholder="Name" required>
         <input type="text" name="phone" placeholder="Phone" required>
         <select name="role" required>
-            <option value="Web Developer">Web Developer</option>
-            <option value="Cloud Architect">Cloud Architect</option>
-            <option value="Technical Writer">Technical Writer</option>
-            <option value="Network Engineer">Network Engineer</option>
-            <option value="DevOps Engineer">DevOps Engineer</option>
-            <option value="Data Scientist">Data Scientist</option>
-            <option value="Business Analyst">Business Analyst</option>
-            <option value="IT Consultant">IT Consultant</option>
-            <option value="UX/UI Designer">UX/UI Designer</option>
+            <option value="Director General">Director General</option>
+            <option value="Executive Personal Assistant">Executive Personal Assistant</option>
+            <option value="PRO">PRO</option>
+            <option value="Chief Med Reg Officer">Chief Med Reg Officer</option>
+            <option value="Sen.Ass.Med Reg.Officer">Sen.Ass.Med Reg.Officer</option>
+            <option value="Medicine Reg Officer">Medicine Reg Officer</option>
+            <option value="Pharmacovigilance Coordinator">Pharmacovigilance Coordinator</option>
+            <option value="Chief Med Analyst">Chief Med Analyst</option>
+            <option value="Sen.Quality Assurance Officer">Sen.Quality Assurance Officer</option>
+            <option value="Medicine Reg Officer">Medicine Reg Officer</option>
+            <option value="Medicine Analyst">Medicine Analyst</option>
+            <option value="Sample Custodian">Sample Custodian</option>
+            <option value="Labotory Technician">Labotory Technician</option>
+            <option value="Labotory Assistant">Labotory Assistant</option>
+            <option value="Medicine Inspector">Medicine Inspector</option>
+            <option value="Sen. Ass.Med Inspector">Sen. Ass.Med Inspector</option>
+            <option value="Chief Human Resource">Chief Human Resource</option>
+            <option value="Sen.Human Resource">Sen.Human Resource</option>
+            <option value="Administrative Officer">Administrative Officer</option>
+            <option value="Administration Assistant">Administration Assistant</option>
+            <option value="Ass.Admin & HR Officer">Ass.Admin & HR Officer</option>
+            <option value="Senior Secretary">Senior Secretary</option>
+            <option value="Receptionist">Receptionist</option>
+            <option value="Office Assistant">Office Assistant</option>
+            <option value="Head Driver">Head Driver</option>
+            <option value="Driver">Driver</option>
+            <option value="Cleaner">Cleaner</option>
+            <option value="Procurement Clerk">Procurement Clerk</option>
+            <option value="Sen.Ass.ICT Officer">Sen.Ass.ICT Officer</option>
+            <option value="ICT Officer">ICT Officer</option>
+            <option value="Chief Accountant">Chief Accountant</option>
+            <option value="Accounta">Accountant</option>
+            <option value="Account Assistant">Account Assistant</option>
+            
+            
+
+
+
+
+
         </select>
         <select name="gender">
             <option value="Male">Male</option>
@@ -146,7 +202,6 @@
     </form>
     {% endif %}
 
-    <!-- Employee Table -->
     <table>
         <tr>
             <th>ID</th><th>Name</th><th>Phone</th><th>Role</th><th>Gender</th><th>Salary</th><th>Actions</th>
@@ -176,6 +231,6 @@
     {% if role == 'admin' %}
     <a href="/delete_all" class="btn">Delete All Records</a>
     {% endif %}
-
+</div>
 </body>
 </html>

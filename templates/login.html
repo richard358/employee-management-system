@@ -1,53 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Employee Management System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding-top: 80px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
 
         form {
             background: #fff;
-            padding: 40px;
-            display: inline-block;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px #ccc;
+            width: 100%;
+            max-width: 350px;
         }
 
         input {
             padding: 10px;
             margin: 10px 0;
-            width: 250px;
+            width: 100%;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
         }
 
         .btn {
-            background-color: #007bff;
-            color: white;
             padding: 10px 20px;
+            background: #007bff;
+            color: white;
             border: none;
             cursor: pointer;
             border-radius: 4px;
-            margin-top: 10px;
+            width: 100%;
         }
 
         .btn:hover {
-            background-color: #0056b3;
+            background: #0056b3;
         }
 
         .flash {
             color: red;
-            margin-bottom: 15px;
-        }
-
-        #flash-message {
-            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            text-align: center;
         }
     </style>
 </head>
@@ -64,7 +67,6 @@
                     {% endfor %}
                 </div>
                 <script>
-                    // Auto-hide flash message after 3 seconds
                     setTimeout(function () {
                         const flash = document.getElementById('flash-message');
                         if (flash) flash.style.display = 'none';
@@ -73,8 +75,8 @@
             {% endif %}
         {% endwith %}
 
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
         <button class="btn" type="submit">Login</button>
     </form>
 
