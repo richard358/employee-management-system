@@ -33,7 +33,7 @@
 <form action="/add" method="post" class="mb-4">
     <div class="row g-2">
         <div class="col-md-2"><input type="text" name="id" placeholder="ID" class="form-control" required></div>
-        <div class="col-md-2"><input type="text" name="name" placeholder="Name" class="form-control" required></div>
+        <div class="col-md-3"><input type="text" name="name" placeholder="Full Name" class="form-control" required></div>
         <div class="col-md-2"><input type="text" name="phone" placeholder="Phone" class="form-control" required></div>
         <div class="col-md-3">
             <select name="role" class="form-control" required>
@@ -78,7 +78,7 @@
                 <option value="Female">Female</option>
             </select>
         </div>
-        <div class="col-md-2"><input type="text" name="salary" placeholder="Salary" class="form-control" required></div>
+        <div class="col-md-1"><input type="text" name="salary" placeholder="Salary" class="form-control" required></div>
     </div>
     <div class="text-end mt-2">
         <button class="btn btn-success">Add Employee</button>
@@ -87,36 +87,53 @@
 {% endif %}
 
 <!-- Employee Table -->
-<div class="table-responsive">
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th><th>Name</th><th>Phone</th><th>Role</th><th>Gender</th><th>Salary</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for emp in employees %}
-            <tr>
-                <form action="/update" method="post">
-                    <td><input type="text" name="id" value="{{ emp[0] }}" class="form-control" readonly></td>
-                    <td><input type="text" name="name" value="{{ emp[1] }}" class="form-control" style="min-width: 200px;"></td>
-                    <td><input type="text" name="phone" value="{{ emp[2] }}" class="form-control"></td>
-                    <td><input type="text" name="role" value="{{ emp[3] }}" class="form-control"></td>
-                    <td><input type="text" name="gender" value="{{ emp[4] }}" class="form-control"></td>
-                    <td><input type="text" name="salary" value="{{ emp[5] }}" class="form-control"></td>
-                    <td>
-                        {% if role == 'admin' %}
-                            <button class="btn btn-primary btn-sm mb-1" type="submit">Update</button>
-                            <a href="/delete/{{ emp[0] }}" class="btn btn-danger btn-sm">Delete</a>
-                        {% else %}
-                            <span class="text-muted">N/A</span>
-                        {% endif %}
-                    </td>
-                </form>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th><th>Name</th><th>Phone</th><th>Role</th><th>Gender</th><th>Salary</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for emp in employees %}
+        <tr>
+            <form action="/update" method="post">
+                <td><input type="text" name="id" value="{{ emp[0] }}" class="form-control" readonly></td>
+                <td><input type="text" name="name" value="{{ emp[1] }}" class="form-control"></td>
+                <td><input type="text" name="phone" value="{{ emp[2] }}" class="form-control"></td>
+                <td><input type="text" name="role" value="{{ emp[3] }}" class="form-control"></td>
+                <td><input type="text" name="gender" value="{{ emp[4] }}" class="form-control"></td>
+                <td><input type="text" name="salary" value="{{ emp[5] }}" class="form-control"></td>
+                <td>
+                    {% if role == 'admin' %}
+                        <button class="btn btn-primary btn-sm mb-1" type="submit">Update</button>
+                        <a href="/delete/{{ emp[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                    {% else %}
+                        <span class="text-muted">N/A</span>
+                    {% endif %}
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination Controls -->
+{% if total_pages > 1 %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {% if page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('dashboard', page=page-1) }}">Previous</a>
+        </li>
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('dashboard', page=p) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('dashboard', page=page+1) }}">Next</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
 
 {% endblock %}

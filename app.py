@@ -3,6 +3,7 @@ import psycopg2
 import pandas as pd
 import bcrypt
 import os
+import math
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -49,13 +50,24 @@ def logout():
 def dashboard():
     if 'user' not in session:
         return redirect(url_for('login'))
+
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    offset = (page - 1) * per_page
+
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM data")
+    cur.execute("SELECT COUNT(*) FROM data")
+    total_employees = cur.fetchone()[0]
+
+    cur.execute("SELECT * FROM data ORDER BY id LIMIT %s OFFSET %s", (per_page, offset))
     employees = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('index.html', employees=employees, role=session.get('role'))
+
+    total_pages = math.ceil(total_employees / per_page)
+
+    return render_template('index.html', employees=employees, role=session.get('role'), page=page, total_pages=total_pages)
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -138,7 +150,7 @@ def search():
     employees = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('index.html', employees=employees, role=session.get('role'))
+    return render_template('index.html', employees=employees, role=session.get('role'), page=1, total_pages=1)
 
 @app.route('/download_excel')
 def download_excel():
