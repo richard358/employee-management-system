@@ -139,14 +139,23 @@ def delete_all():
 def search():
     if 'user' not in session:
         return redirect(url_for('login'))
+
     option = request.args.get('option')
     value = request.args.get('value')
+
     if option not in ['id', 'name', 'phone', 'role', 'gender', 'salary']:
         flash("Invalid search option.")
         return redirect(url_for('dashboard'))
+
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM data WHERE {option} ILIKE %s", (f'%{value}%',))
+
+    # Exact match for gender
+    if option == 'gender':
+        cur.execute("SELECT * FROM data WHERE gender = %s", (value,))
+    else:
+        cur.execute(f"SELECT * FROM data WHERE {option} ILIKE %s", (f'%{value}%',))
+
     employees = cur.fetchall()
     cur.close()
     conn.close()
