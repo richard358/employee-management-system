@@ -2,6 +2,12 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 
+<style>
+  .widen-input {
+    min-width: 180px;
+  }
+</style>
+
 <h2 class="mb-4">Dashboard</h2>
 
 <!-- Search and Show All -->
@@ -88,37 +94,43 @@
 {% endif %}
 
 <!-- Employee Table -->
-<table class="table table-bordered table-hover">
-  <thead class="table-dark">
-    <tr>
-      <th>ID</th><th>Name</th><th>Phone</th><th>Role</th><th>Gender</th><th>Salary</th><th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for emp in employees %}
-    <tr>
-      <form action="/update" method="post">
-        <td><input type="text" name="id" value="{{ emp[0] }}" class="form-control" readonly></td>
-
-        <td><input type="text" name="name" value="{{ emp[1] }}" class="form-control" {% if role != 'admin' %}readonly{% endif %}></td>
-        <td><input type="text" name="phone" value="{{ emp[2] }}" class="form-control" {% if role != 'admin' %}readonly{% endif %}></td>
-        <td><input type="text" name="role" value="{{ emp[3] }}" class="form-control" {% if role != 'admin' %}readonly{% endif %}></td>
-        <td><input type="text" name="gender" value="{{ emp[4] }}" class="form-control" {% if role != 'admin' %}readonly{% endif %}></td>
-        <td><input type="text" name="salary" value="{{ emp[5] }}" class="form-control" {% if role != 'admin' %}readonly{% endif %}></td>
-
-        <td>
-          {% if role == 'admin' %}
-            <button class="btn btn-primary btn-sm mb-1" type="submit">Update</button>
-            <a href="/delete/{{ emp[0] }}" class="btn btn-danger btn-sm">Delete</a>
-          {% else %}
-            <span class="text-muted">N/A</span>
-          {% endif %}
-        </td>
-      </form>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th><th>Name</th><th>Phone</th><th>Role</th><th>Gender</th><th>Salary</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <form action="/update" method="post">
+          <td><input type="text" name="id" value="{{ emp[0] }}" class="form-control" readonly></td>
+          <td>
+            {% if role == 'admin' %}
+              <input type="text" name="name" value="{{ emp[1] }}" class="form-control widen-input">
+            {% else %}
+              <input type="text" value="{{ emp[1] }}" class="form-control widen-input" readonly>
+            {% endif %}
+          </td>
+          <td><input type="text" name="phone" value="{{ emp[2] }}" class="form-control widen-input"></td>
+          <td><input type="text" name="role" value="{{ emp[3] }}" class="form-control widen-input"></td>
+          <td><input type="text" name="gender" value="{{ emp[4] }}" class="form-control" readonly></td>
+          <td><input type="text" name="salary" value="{{ emp[5] }}" class="form-control"></td>
+          <td>
+            {% if role == 'admin' %}
+              <button class="btn btn-primary btn-sm mb-1" type="submit">Update</button>
+              <a href="/delete/{{ emp[0] }}" class="btn btn-danger btn-sm">Delete</a>
+            {% else %}
+              <span class="text-muted">N/A</span>
+            {% endif %}
+          </td>
+        </form>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 <!-- Pagination Controls -->
 {% if total_pages > 1 %}
