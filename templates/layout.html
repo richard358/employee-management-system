@@ -2,90 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Employee Management{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap 5 CDN -->
+    <title>{% block title %}Employee Management System{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
-        <style>
-  body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  .wrapper {
-    display: flex;
-    height: 100vh;
-  }
-  .sidebar {
-    width: 200px; /* Reduced from 240px */
-    background-color: #212529;
-    color: white;
-    padding: 20px;
-  }
-  .sidebar a {
-    display: block;
-    color: white;
-    padding: 10px 0;
-    text-decoration: none;
-  }
-  .sidebar a:hover {
-    background-color: #343a40;
-    border-radius: 5px;
-    padding-left: 10px;
-  }
-  .main {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
-  @media (max-width: 768px) {
-    .sidebar {
-      width: 100%;
-      height: auto;
-      position: relative;
-    }
-    .main {
-      padding: 10px;
-    }
-  }
-</style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
+        .wrapper {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 220px;
+            min-height: 100vh;
+            background-color: #343a40;
+        }
+
+        .sidebar .nav-link {
+            color: white;
+            padding: 10px;
+            display: block;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 1040;
+                width: 100%;
+                height: auto;
+            }
+
+            .wrapper {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
 
+<!-- Navigation and Sidebar -->
 <div class="wrapper">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h4>EMS Menu</h4>
-        <a href="/dashboard">Dashboard</a>
-        {% if role == 'admin' %}
-        <a href="/manage_users">Manage Users</a>
-        <a href="/delete_all">Delete All</a>
-        {% endif %}
-        <a href="/download_excel">Download Excel</a>
-        <a href="/logout">Logout</a>
-    </div>
+    <nav class="navbar navbar-dark bg-dark flex-md-column sidebar p-3">
+        <button class="navbar-toggler d-md-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <!-- Main content -->
-    <div class="main">
+        <div class="collapse d-md-block" id="sidebarMenu">
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/change_password" class="nav-link">Change Password</a>
+            {% if session['role'] == 'admin' %}
+                <a href="/manage_users" class="nav-link">Manage Users</a>
+            {% endif %}
+            <a href="/logout" class="nav-link">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="content">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <div class="alert alert-info" role="alert">
+                <div class="alert alert-info">
                     {% for message in messages %}
                         {{ message }}
                     {% endfor %}
                 </div>
             {% endif %}
         {% endwith %}
-
+        
         {% block content %}{% endblock %}
-    </div>
+    </main>
 </div>
 
-<!-- Bootstrap JS (Optional) -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
